@@ -11,6 +11,6 @@ Type Selectors | div, section | Yes
 Class Selectors | .post, .btn | Yes
 ID Selectors | #page, #element | Yes
 Universal Selectors | * | Yes
-Universal Namespaces | ns\|* | No
+Universal Namespaces | ns\|* *\|\* | No 
 Attribute Selectors | \[attr operator value] | Yes
 
