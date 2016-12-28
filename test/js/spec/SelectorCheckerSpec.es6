@@ -381,12 +381,13 @@ describe('SelectorChecker', () => {
       expect(actualResult).toBe(expectedResult);
     });
 
-    it('section>div matches div:first-child ==> true', () => {
+    it('section>{text}+div matches div:first-child ==> true', () => {
       let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
 
       parent = document.createElement("section");
       element = document.createElement("div");
 
+      parent.appendChild(document.createTextNode("text"));
       parent.appendChild(element);
 
       selector = "div:first-child";
@@ -407,6 +408,647 @@ describe('SelectorChecker', () => {
       parent.appendChild(element);
 
       selector = "p:first-child";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>div+{text} matches div:last-child ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("div");
+
+      parent.appendChild(element);
+      parent.appendChild(document.createTextNode("text"));
+
+      selector = "div:last-child";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>div+p matches div:last-child ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("div");
+
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+
+      selector = "div:last-child";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type="checkbox"] (indeterminate) matches :indeterminate ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "checkbox");
+      element.indeterminate = true;
+
+      selector = ":indeterminate";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type="checkbox"] matches :indeterminate ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "checkbox");
+
+      selector = ":indeterminate";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type="radio"] (unchecked) matches :indeterminate ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "radio");
+      element.setAttribute("name", "test");
+
+      selector = ":indeterminate";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type="radio"] matches :indeterminate ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "radio");
+      element.setAttribute("name", "test");
+      element.setAttribute("checked", "checked");
+
+      selector = ":indeterminate";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('progress matches :indeterminate ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("progress");
+
+      selector = ":indeterminate";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('progress[value=1] matches :indeterminate ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("progress");
+      element.value = 1;
+
+      selector = ":indeterminate";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type="checkbox"] (checked) matches :checked ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "checkbox");
+      element.setAttribute("checked", "checked");
+
+      selector = ":checked";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type="checkbox"] matches :checked ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "checkbox");
+
+      selector = ":checked";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type="radio"] (checked) matches :checked ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "radio");
+      element.setAttribute("checked", "checked");
+
+      selector = ":checked";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type="radio"] matches :checked ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "radio");
+
+      selector = ":checked";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('select>option (selected) matches :checked ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("select");
+      element = document.createElement("option");
+      element.setAttribute("selected", "selected");
+      parent.appendChild(element);
+
+      selector = ":checked";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('select>option+option matches :checked ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("select");
+      element = document.createElement("option");
+      parent.appendChild(document.createElement("option"));
+      parent.appendChild(element);
+
+      selector = ":checked";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('select>option (default) matches :checked ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("select");
+      element = document.createElement("option");
+      parent.appendChild(element);
+
+      selector = ":checked";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button[disabled] matches :disabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("button");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":disabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div[disabled] matches :disabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":disabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button matches :disabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("button");
+
+      selector = ":disabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[disabled] matches :disabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":disabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input matches :disabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+
+      selector = ":disabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('textarea[disabled] matches :disabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("textarea");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":disabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('textarea matches :disabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("textarea");
+
+      selector = ":disabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('select[disabled] matches :disabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("select");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":disabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('select matches :disabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("select");
+
+      selector = ":disabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('option[disabled] matches :disabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("option");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":disabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('option matches :disabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("option");
+
+      selector = ":disabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('fieldset[disabled] matches :disabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("fieldset");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":disabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('fieldset matches :disabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("fieldset");
+
+      selector = ":disabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button[disabled] matches :enabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("button");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":enabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div[disabled] matches :enabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":enabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button matches :enabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("button");
+
+      selector = ":enabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[disabled] matches :enabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":enabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input matches :enabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+
+      selector = ":enabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('textarea[disabled] matches :enabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("textarea");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":enabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('textarea matches :enabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("textarea");
+
+      selector = ":enabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('select[disabled] matches :enabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("select");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":enabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('select matches :enabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("select");
+
+      selector = ":enabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('option[disabled] matches :enabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("option");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":enabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('option matches :enabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("option");
+
+      selector = ":enabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('fieldset[disabled] matches :enabled ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("fieldset");
+      element.setAttribute("disabled", "disabled");
+
+      selector = ":enabled";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('fieldset matches :enabled ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("fieldset");
+
+      selector = ":enabled";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div matches :empty ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+
+      selector = ":empty";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div{text} matches :empty ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+      element.appendChild(document.createTextNode("text"));
+
+      selector = ":empty";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>{text}+span+{text}+button matches :first-of-type ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = ":first-of-type";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>{text}+button+{text}+button matches :first-of-type ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(document.createElement("button"));
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = ":first-of-type";
       expectedResult = false;
 
       actualResult = checker.check(element, selector);

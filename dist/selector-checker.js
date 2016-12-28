@@ -91,9 +91,130 @@ var SelectorChecker = function () {
 
 
   _createClass(SelectorChecker, [{
-    key: "isElementFirstChild",
-    value: function isElementFirstChild(element) {
-      return element.parentElement && element.parentElement.childNodes[0] === element;
+    key: "isFirstChild",
+    value: function isFirstChild(element) {
+      return element.parentElement && element.parentElement.children[0] === element;
+    }
+
+    /**
+     * Check if element is a first child of its parent
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isLastChild",
+    value: function isLastChild(element) {
+      return element.parentElement && element.parentElement.children[element.parentElement.children.length - 1] === element;
+    }
+
+    /**
+     * Check if element is in indeterminate state
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isIndeterminate",
+    value: function isIndeterminate(element) {
+      var group = void 0,
+          i = void 0;
+      // Any <input type="checkbox"> element whose indeterminate DOM property is set to true by JavaScript
+      if (element.tagName === "INPUT" && element.getAttribute("type") === "checkbox") {
+        return element.indeterminate === true;
+      }
+      // <input type="radio"> elements whose radio button group's radio buttons are all unchecked
+      else if (element.tagName === "INPUT" && element.getAttribute("type") === "radio") {
+          if (group = element.getAttribute("name")) {
+            group = element.ownerDocument.querySelectorAll("input[type=\"radio\"][name=\"" + group + "\"]");
+            for (i = 0; i < group.length; i++) {
+              if (group[i].checked) return false;
+            }
+          }
+          return element.checked === false;
+        }
+        // <progress> elements in an indeterminate state
+        else if (element.tagName === "PROGRESS") {
+            return !element.hasAttribute("value");
+          }
+      // Otherwise, return false
+      return false;
+    }
+
+    /**
+     * Check if element is has checked state
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isChecked",
+    value: function isChecked(element) {
+      var type = element.getAttribute("type");
+      if (element.tagName === "INPUT" && (type = type.toLowerCase() === "checkbox" || type === "radio")) {
+        return element.checked === true;
+      } else if (element.tagName === "OPTION") {
+        return element.selected === true;
+      }
+      return false;
+    }
+
+    /**
+     * Check if element is actually disabled
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isDisabled",
+    value: function isDisabled(element) {
+      var elements = ["button", "input", "select", "textarea", "optgroup", "option", "menuitem", "fieldset"];
+
+      if (elements.indexOf(element.tagName.toLowerCase()) > -1) {
+        return element.disabled === true;
+      }
+
+      return false;
+    }
+
+    /**
+     * Check if element is actually enabled
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isEnabled",
+    value: function isEnabled(element) {
+      return this.isDisabled(element) !== true;
+    }
+
+    /**
+     * Check if element is actually empty
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isEmpty",
+    value: function isEmpty(element) {
+      return element.childNodes.length === 0;
+    }
+
+    /**
+     * Check if element is actually first of type
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isFirstOfType",
+    value: function isFirstOfType(element) {
+      var elem = element;
+      while (elem = elem.previousElementSibling) {
+        if (elem.tagName === element.tagName) return false;
+      }
+      return true;
     }
 
     /**
@@ -197,6 +318,7 @@ var SelectorChecker = function () {
      * Check if specified element matches target pseudo selector
      * @param element
      * @param value
+     * @param statesMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
      * @returns {boolean}
      *
      * @throws TypeError - when unknown token type was spotted
@@ -204,12 +326,35 @@ var SelectorChecker = function () {
 
   }, {
     key: "matchPseudoSelector",
-    value: function matchPseudoSelector(element, value) {
+    value: function matchPseudoSelector(element, value, statesMap) {
       switch (value) {
         case ":first-child":
-          return this.isElementFirstChild(element);
+          return this.isFirstChild(element);
+        case ":last-child":
+          return this.isLastChild(element);
+        case ":indeterminate":
+          return this.isIndeterminate(element);
+        case ":checked":
+          return this.isChecked(element);
+        case ":disabled":
+          return this.isDisabled(element);
+        case ":enabled":
+          return this.isEnabled(element);
+        case ":empty":
+          return this.isEmpty(element);
+        case ":first-of-type":
+          return this.isFirstOfType(element);
+
+        // TODO: Add in feature releases
+        case ":any":
+        case ":dir":
+        case ":default":
+        case ":first":
+        case ":fullscreen":
+          return false;
+
         default:
-          throw new TypeError("Unexpected token " + token + " to match");
+          throw new TypeError("Unexpected pseudo " + value + " to match");
       }
     }
 
@@ -217,6 +362,7 @@ var SelectorChecker = function () {
      * Check if specified element matches target token
      * @param element
      * @param token
+     * @param statesMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
      * @returns {boolean}
      *
      * @throws TypeError - when unknown token type was spotted
@@ -224,7 +370,7 @@ var SelectorChecker = function () {
 
   }, {
     key: "matchSelectorToken",
-    value: function matchSelectorToken(element, token) {
+    value: function matchSelectorToken(element, token, statesMap) {
       switch (token.type) {
         case TYPE_SELECTOR:
           return this.matchTagName(element, token.value);
@@ -332,6 +478,7 @@ var SelectorChecker = function () {
      * Check if specified element matches target css selector
      * @param element
      * @param selector
+     * @param statesMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
      * @returns {boolean}
      *
      * @example
@@ -343,7 +490,7 @@ var SelectorChecker = function () {
 
   }, {
     key: "check",
-    value: function check(element, selector) {
+    value: function check(element, selector, statesMap) {
       var tokens = this.tokenizer.tokenize(selector),
           token = void 0,
           i = void 0,
@@ -353,7 +500,7 @@ var SelectorChecker = function () {
 
       // While has next token
       while (token = tokens.pop()) {
-        matches = this.matchSelectorToken(elem, token);
+        matches = this.matchSelectorToken(elem, token, statesMap);
 
         // Stop looping on first mismatch
         if (!matches) {
