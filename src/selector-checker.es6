@@ -180,6 +180,57 @@ class SelectorChecker {
   }
 
   /**
+   * Check if element is actually last of type
+   * @param element
+   * @returns {boolean}
+   */
+  isLastOfType(element){
+    let elem = element;
+    while (elem = elem.nextElementSibling) {
+      if (elem.tagName === element.tagName) return false;
+    }
+    return true;
+  }
+
+  /**
+   * Check if element is actually the only child of its parent
+   * @param element
+   * @returns {boolean}
+   */
+  isOnlyChild(element){
+    return this.isFirstChild(element) && this.isLastChild(element);
+  }
+
+  /**
+   * Check if element is actually the only element of its type in parent
+   * @param element
+   * @returns {boolean}
+   */
+  isOnlyOfType(element){
+    return this.isFirstOfType(element) && this.isLastOfType(element);
+  }
+
+  /**
+   * Check if element is actually required
+   * @param element
+   * @returns {boolean}
+   */
+  isRequired(element){
+    let elements = ["input", "select", "textarea"];
+    return elements.indexOf(element.tagName.toLowerCase()) > -1 && element.hasAttribute("required");
+  }
+
+  /**
+   * Check if element is actually optional
+   * @param element
+   * @returns {boolean}
+   */
+  isOptional(element){
+    let elements = ["input", "select", "textarea"];
+    return elements.indexOf(element.tagName.toLowerCase()) > -1 && !element.hasAttribute("required");
+  }
+
+  /**
    * Check if specified tagName matches element
    * @param element
    * @param tagName
@@ -295,7 +346,17 @@ class SelectorChecker {
       case ":empty":
         return this.isEmpty(element);
       case ":first-of-type":
-        return this.isFirstOfType(element);  
+        return this.isFirstOfType(element);
+      case ":last-of-type":
+        return this.isLastOfType(element);
+      case ":only-child":
+        return this.isOnlyChild(element);
+      case ":only-of-type":
+        return this.isOnlyOfType(element);
+      case ":required":
+        return this.isRequired(element);
+      case ":optional":
+        return this.isOptional(element);
 
       // TODO: Add in feature releases
       case ":any":
@@ -303,7 +364,7 @@ class SelectorChecker {
       case ":default":
       case ":first":
       case ":fullscreen":
-        return false;
+        return undefined;
 
       default:
         throw new TypeError(`Unexpected pseudo ${value} to match`);

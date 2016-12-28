@@ -218,6 +218,72 @@ var SelectorChecker = function () {
     }
 
     /**
+     * Check if element is actually last of type
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isLastOfType",
+    value: function isLastOfType(element) {
+      var elem = element;
+      while (elem = elem.nextElementSibling) {
+        if (elem.tagName === element.tagName) return false;
+      }
+      return true;
+    }
+
+    /**
+     * Check if element is actually the only child of its parent
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isOnlyChild",
+    value: function isOnlyChild(element) {
+      return this.isFirstChild(element) && this.isLastChild(element);
+    }
+
+    /**
+     * Check if element is actually the only element of its type in parent
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isOnlyOfType",
+    value: function isOnlyOfType(element) {
+      return this.isFirstOfType(element) && this.isLastOfType(element);
+    }
+
+    /**
+     * Check if element is actually required
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isRequired",
+    value: function isRequired(element) {
+      var elements = ["input", "select", "textarea"];
+      return elements.indexOf(element.tagName.toLowerCase()) > -1 && element.hasAttribute("required");
+    }
+
+    /**
+     * Check if element is actually optional
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isOptional",
+    value: function isOptional(element) {
+      var elements = ["input", "select", "textarea"];
+      return elements.indexOf(element.tagName.toLowerCase()) > -1 && !element.hasAttribute("required");
+    }
+
+    /**
      * Check if specified tagName matches element
      * @param element
      * @param tagName
@@ -344,6 +410,16 @@ var SelectorChecker = function () {
           return this.isEmpty(element);
         case ":first-of-type":
           return this.isFirstOfType(element);
+        case ":last-of-type":
+          return this.isLastOfType(element);
+        case ":only-child":
+          return this.isOnlyChild(element);
+        case ":only-of-type":
+          return this.isOnlyOfType(element);
+        case ":required":
+          return this.isRequired(element);
+        case ":optional":
+          return this.isOptional(element);
 
         // TODO: Add in feature releases
         case ":any":
@@ -351,7 +427,7 @@ var SelectorChecker = function () {
         case ":default":
         case ":first":
         case ":fullscreen":
-          return false;
+          return undefined;
 
         default:
           throw new TypeError("Unexpected pseudo " + value + " to match");

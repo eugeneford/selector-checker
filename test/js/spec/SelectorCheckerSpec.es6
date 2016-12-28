@@ -1055,5 +1055,262 @@ describe('SelectorChecker', () => {
 
       expect(actualResult).toBe(expectedResult);
     });
+
+    it('section>{text}+span+{text}+button matches :last-of-type ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = ":last-of-type";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>{text}+button+{text}+button matches :last-of-type ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(document.createElement("button"));
+
+      selector = ":last-of-type";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>{text}+div+{text} matches div:only-child ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("div");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+      parent.appendChild(document.createTextNode("text"));
+
+      selector = "div:only-child";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>{text}+div+div+{text} matches div:only-child ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("div");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("div"));
+      parent.appendChild(document.createTextNode("text"));
+
+      selector = "div:only-child";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>div+{text}+button+{text}+div matches :only-of-type ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+      parent.appendChild(document.createElement("div"));
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(document.createElement("div"));
+
+      selector = ":only-of-type";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>button+{text}+button+{text}+div matches :only-of-type ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+      parent.appendChild(document.createElement("button"));
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(document.createElement("div"));
+
+      selector = ":only-of-type";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>div+{text}+button+{text}+button matches :only-of-type ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+      parent.appendChild(document.createElement("div"));
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(document.createElement("button"));
+
+      selector = ":only-of-type";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('section>button+{text}+button+{text}+button matches :only-of-type ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+      parent.appendChild(document.createElement("button"));
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(document.createElement("button"));
+
+      selector = ":only-of-type";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[required] matches :required ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("required", "required");
+
+      selector = ":required";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input matches :required ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+
+      selector = ":required";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[required] matches :optional ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("required", "required");
+
+      selector = ":optional";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input matches :optional ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+
+      selector = ":optional";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div[required] matches :optional ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+      element.setAttribute("required", "required");
+
+      selector = ":optional";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div[required] matches :required ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+      element.setAttribute("required", "required");
+
+      selector = ":required";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div matches :optional ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+
+      selector = ":optional";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div matches :required ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+
+      selector = ":required";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
   });
 });

@@ -15,7 +15,6 @@ ID Selectors | #page, #element | Yes
 Universal Selectors | * | Yes
 Universal Namespaces | ns\|* \*\|\* | No
 Attribute Selectors | \[attr operator value] | Yes
-Attribute Selectors | \[attr operator value] | Yes
 
 #### Combinators
 
@@ -41,12 +40,19 @@ Active | :active | Yes (via StateMap)
 Hover | :hover | Yes (via StateMap)
 Focus | :focus | Yes (via StateMap)
 Visited | :visited | Yes (via StateMap)
+Link | :link | Yes (via StateMap)
 Disabled | :disabled | Yes
 Enabled | :enabled | Yes
 Empty | :empty | Yes
 First | :first | No
 First Of Type | :first-of-type | Yes
+Last Of Type | :last-of-type | Yes
 Fullscreen | :fullscreen | No
+Only Child | :only-child | Yes
+Only Of Type | :only-of-type | Yes
+Required | :required | Yes
+Optional | :optional | Yes  
+
 
 
 
