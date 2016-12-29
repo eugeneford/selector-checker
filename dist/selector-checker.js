@@ -284,6 +284,133 @@ var SelectorChecker = function () {
     }
 
     /**
+     * Check if element is actually a read-write element
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isReadWrite",
+    value: function isReadWrite(element) {
+      var types = ["text", "email", "date", "time", "url", "search", "number", "week", "month", "tel"],
+          type = element.getAttribute("type");
+
+      if (element.tagName === "TEXTAREA") {
+        return !element.hasAttribute("readonly");
+      } else if (element.tagName === "INPUT") {
+        if (type && types.indexOf(type.toLowerCase()) === -1) {
+          return false;
+        }
+        return !element.hasAttribute("readonly");
+      }
+      return element.hasAttribute("contenteditable");
+    }
+
+    /**
+     * Check if element is actually a read-only element
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isReadOnly",
+    value: function isReadOnly(element) {
+      return this.isReadWrite(element) === false;
+    }
+
+    /**
+     * Check if element is actually a document root element
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isRoot",
+    value: function isRoot(element) {
+      return element.ownerDocument.documentElement === element;
+    }
+
+    /**
+     * Check if element is actually a document target element
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isTarget",
+    value: function isTarget(element) {
+      return element.hasAttribute("id") && "#" + element.getAttribute("id") === element.ownerDocument.location.hash;
+    }
+
+    /**
+     * Check if element is actually out of range
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isOutOfRange",
+    value: function isOutOfRange(element) {
+      var types = ["number", "range", "date", "datetime", "datetime-local", "month", "time", "week"],
+          type = void 0,
+          min = void 0,
+          max = void 0,
+          value = void 0,
+          isOut = false;
+      if (element.tagName === "INPUT") {
+        type = element.getAttribute("type");
+        value = element.getAttribute("value");
+        min = element.getAttribute("min");
+        max = element.getAttribute("max");
+
+        if (type && types.indexOf(type.toLowerCase()) > -1 && (min || max)) {
+          switch (type) {
+            case "number":
+            case "range":
+              value = !!value ? parseFloat(value) : undefined;
+              min = !!min ? parseFloat(min) : undefined;
+              max = !!max ? parseFloat(max) : undefined;
+              break;
+
+            case "month":
+            case "date":
+              value = !!value ? new Date(value).getTime() : undefined;
+              min = !!min ? new Date(min).getTime() : undefined;
+              max = !!max ? new Date(max).getTime() : undefined;
+              break;
+
+            case "week":
+              value = !!value ? value.split("-W") : undefined;
+              value = value ? new Date(parseInt(value[0], 10), 0, 1 + (parseInt(value[1], 10) - 1) * 7) : undefined;
+
+              min = !!min ? min.split("-W") : undefined;
+              min = min ? new Date(parseInt(min[0], 10), 0, 1 + (parseInt(min[1], 10) - 1) * 7) : undefined;
+
+              max = !!max ? max.split("-W") : undefined;
+              max = max ? new Date(parseInt(max[0], 10), 0, 1 + (parseInt(max[1], 10) - 1) * 7) : undefined;
+              break;
+
+            case "datetime-local":
+            case "datetime":
+              break;
+
+            case "time":
+              break;
+          }
+
+          if (isNaN(value) || isNaN(min) && isNaN(max)) return undefined;
+
+          if (!isNaN(min)) isOut = min > value;
+
+          if (!isOut && !isNaN(max)) isOut = value > max;
+
+          return isOut;
+        }
+      }
+      return undefined;
+    }
+
+    /**
      * Check if specified tagName matches element
      * @param element
      * @param tagName
@@ -420,6 +547,16 @@ var SelectorChecker = function () {
           return this.isRequired(element);
         case ":optional":
           return this.isOptional(element);
+        case ":read-only":
+          return this.isReadOnly(element);
+        case ":read-write":
+          return this.isReadWrite(element);
+        case ":root":
+          return this.isRoot(element);
+        case ":target":
+          return this.isTarget(element);
+        case ":out-of-range":
+          return this.isOutOfRange(element);
 
         // TODO: Add in feature releases
         case ":any":
@@ -427,6 +564,7 @@ var SelectorChecker = function () {
         case ":default":
         case ":first":
         case ":fullscreen":
+        case ":scope":
           return undefined;
 
         default:

@@ -21,39 +21,45 @@ Attribute Selectors | \[attr operator value] | Yes
 Category | Example | Supports
 -------- | ------- | --------
 Adjacent sibling selectors | A + B | Yes
-General sibling selectors | A ~ B | Yes
 Child selectors | A > B | Yes
 Descendant selectors | A B | Yes
+General sibling selectors | A ~ B | Yes
 
 #### Pseudo-Classes
 
 Category | Example | Supports
 -------- | ------- | --------
+Active | :active | Yes (via StateMap)
+Checked | :checked | Yes
+Disabled | :disabled | Yes
+Empty | :empty | Yes
+Enabled | :enabled | Yes
 First Child | :first-child | Yes
+First Of Type | :first-of-type | Yes
+Focus | :focus | Yes (via StateMap)
+Hover | :hover | Yes (via StateMap)
+Indeterminate | :indeterminate | Yes
+In Range | :in-range | Yes
+Invalid | :invalid | Yes
 Last Child | :last-child | Yes
+Last Of Type | :last-of-type | Yes
+Link | :link | Yes (via StateMap)
+Only Child | :only-child | Yes
+Only Of Type | :only-of-type | Yes
+Optional | :optional | Yes
+Out Of Range | :out-of-range | Yes
+Read Only | :read-only | Yes
+Read Write | :read-write | Yes
+Required | :required | Yes
+Root | :root | Yes
+Target | :target | Yes
+Valid | :valid | Yes
+Visited | :visited | Yes (via StateMap)
 Any | :any | No
 Dir | :dir() | No
 Default | :default | No
-Indeterminate | :indeterminate | Yes
-Checked | :checked | Yes
-Active | :active | Yes (via StateMap)
-Hover | :hover | Yes (via StateMap)
-Focus | :focus | Yes (via StateMap)
-Visited | :visited | Yes (via StateMap)
-Link | :link | Yes (via StateMap)
-Disabled | :disabled | Yes
-Enabled | :enabled | Yes
-Empty | :empty | Yes
 First | :first | No
-First Of Type | :first-of-type | Yes
-Last Of Type | :last-of-type | Yes
 Fullscreen | :fullscreen | No
-Only Child | :only-child | Yes
-Only Of Type | :only-of-type | Yes
-Required | :required | Yes
-Optional | :optional | Yes  
-
-
-
+Scope | :scope | No
 
 #### Pseudo-Elements

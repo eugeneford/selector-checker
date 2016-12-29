@@ -1312,5 +1312,635 @@ describe('SelectorChecker', () => {
 
       expect(actualResult).toBe(expectedResult);
     });
+
+    it('input matches :read-write ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+
+      selector = ":read-write";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[readonly] matches :read-write ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("readonly", "readonly");
+
+      selector = ":read-write";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('textarea matches :read-write ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("textarea");
+
+      selector = ":read-write";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('textarea[readonly] matches :read-write ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("textarea");
+      element.setAttribute("readonly", "readonly");
+
+      selector = ":read-write";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div[contenteditable] matches :read-write ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+      element.setAttribute("contenteditable", "contenteditable");
+
+      selector = ":read-write";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div matches :read-write ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+
+      selector = ":read-write";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input matches :read-only ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+
+      selector = ":read-only";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[readonly] matches :read-only ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("readonly", "readonly");
+
+      selector = ":read-only";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('textarea matches :read-only ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("textarea");
+
+      selector = ":read-only";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('textarea[readonly] matches :read-only ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("textarea");
+      element.setAttribute("readonly", "readonly");
+
+      selector = ":read-only";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div[contenteditable] matches :read-only ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+      element.setAttribute("contenteditable", "contenteditable");
+
+      selector = ":read-only";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div matches :read-only ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+
+      selector = ":read-only";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('html matches :root ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.firstElementChild;
+
+      selector = ":root";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div matches :root ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+
+      selector = ":root";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div[id=test] matches :target ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+      element.setAttribute("id", "test");
+
+      element.ownerDocument.location.hash = "test";
+
+      selector = ":target";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      element.ownerDocument.location.hash = "";
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div matches :target ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("div");
+
+      element.ownerDocument.location.hash = "test";
+
+      selector = ":target";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      element.ownerDocument.location.hash = "";
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=number min=0 max=10 value=5] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "number");
+      element.setAttribute("min", "0");
+      element.setAttribute("max", "10");
+      element.setAttribute("value", "5");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=number min=5 max=10 value=0] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "number");
+      element.setAttribute("min", "5");
+      element.setAttribute("max", "10");
+      element.setAttribute("value", "0");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=number min=5 max=10 value=15] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "number");
+      element.setAttribute("min", "5");
+      element.setAttribute("max", "10");
+      element.setAttribute("value", "15");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=number max=10 value=15] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "number");
+      element.setAttribute("max", "10");
+      element.setAttribute("value", "15");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=number max=10 value=5] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "number");
+      element.setAttribute("max", "10");
+      element.setAttribute("value", "5");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=number min=10 value=5] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "number");
+      element.setAttribute("min", "10");
+      element.setAttribute("value", "5");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=number min=2 value=5] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "number");
+      element.setAttribute("min", "2");
+      element.setAttribute("value", "5");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=number value=5] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "number");
+      element.setAttribute("value", "5");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=date min=2000-01-02 value=2000-01-31] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "date");
+      element.setAttribute("min", "2000-01-02");
+      element.setAttribute("value", "2000-01-31");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=date min=2000-01-02 value=1999-01-31] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "date");
+      element.setAttribute("min", "2000-01-02");
+      element.setAttribute("value", "1999-01-31");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=date max=2000-01-02 value=2000-01-31] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "date");
+      element.setAttribute("max", "2000-01-02");
+      element.setAttribute("value", "2000-01-31");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=date max=2000-01-02 value=1999-01-31] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "date");
+      element.setAttribute("max", "2000-01-02");
+      element.setAttribute("value", "1999-01-31");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=date value=1999-01-31] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "date");
+      element.setAttribute("value", "1999-01-31");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=date min=2000-01-02 value=2000-01-31 max=2001-01-02] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "date");
+      element.setAttribute("min", "2000-01-02");
+      element.setAttribute("value", "2000-01-31");
+      element.setAttribute("max", "2001-01-02");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=date min=2000-01-02 value=1999-01-31 max=2001-01-02] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "date");
+      element.setAttribute("min", "2000-01-02");
+      element.setAttribute("value", "1999-01-31");
+      element.setAttribute("max", "2001-01-02");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=date min=2000-01-02 value=2100-01-31 max=2001-01-02] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "date");
+      element.setAttribute("min", "2000-01-02");
+      element.setAttribute("value", "2100-01-31");
+      element.setAttribute("max", "2001-01-02");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=month min=2000-01 value=2000-01] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "month");
+      element.setAttribute("min", "2000-01");
+      element.setAttribute("value", "2000-01");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=month min=2000-01 value=1993-01] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "month");
+      element.setAttribute("min", "2000-01");
+      element.setAttribute("value", "1993-01");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=month max=2000-01 value=2000-02] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "month");
+      element.setAttribute("max", "2000-01");
+      element.setAttribute("value", "2000-02");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=month max=2000-01 value=1993-01] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "month");
+      element.setAttribute("max", "2000-01");
+      element.setAttribute("value", "1993-01");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=week min=2016-W50 value=2016-W52] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "week");
+      element.setAttribute("min", "2016-W50");
+      element.setAttribute("value", "2016-W52");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=week min=2016-W50 value=2016-W40] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "week");
+      element.setAttribute("min", "2016-W50");
+      element.setAttribute("value", "2016-W40");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=week max=2016-W1 value=2016-W2] matches :out-of-range ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "week");
+      element.setAttribute("max", "2016-W1");
+      element.setAttribute("value", "2016-W2");
+
+      selector = ":out-of-range";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('input[type=week max=2016-W1 value=2016-W1] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "week");
+      element.setAttribute("max", "2016-W1");
+      element.setAttribute("value", "2016-W1");
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+
+    it('input[type=week min=2016-W50 value=2016-W52] matches :out-of-range ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("input");
+      element.setAttribute("type", "week");
+      element.setAttribute("min", "2016-W50");
+      element.setAttribute("value", "2016-W52");
+
+      console.log(new Date("12:00"));
+
+      selector = ":out-of-range";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
   });
 });
