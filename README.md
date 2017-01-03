@@ -43,7 +43,11 @@ In Range | :in-range | Yes
 Invalid | :invalid | Yes
 Last Child | :last-child | Yes
 Last Of Type | :last-of-type | Yes
+Lang | :lang | Yes
 Link | :link | Yes (via StateMap)
+Not | :not | Yes
+Nth Child | :nth-child | Yes
+Nth Last Child | :nth-last-child | Yes
 Only Child | :only-child | Yes
 Only Of Type | :only-of-type | Yes
 Optional | :optional | Yes

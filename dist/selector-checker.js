@@ -345,7 +345,7 @@ var SelectorChecker = function () {
     /**
      * Check if element is actually out of range
      * @param element
-     * @returns {boolean}
+     * @returns {boolean|undefined}
      */
 
   }, {
@@ -354,60 +354,180 @@ var SelectorChecker = function () {
       var types = ["number", "range", "date", "datetime", "datetime-local", "month", "time", "week"],
           type = void 0,
           min = void 0,
-          max = void 0,
-          value = void 0,
-          isOut = false;
-      if (element.tagName === "INPUT") {
+          max = void 0;
+      if (element.tagName === "INPUT" && element.validity) {
         type = element.getAttribute("type");
-        value = element.getAttribute("value");
         min = element.getAttribute("min");
         max = element.getAttribute("max");
 
         if (type && types.indexOf(type.toLowerCase()) > -1 && (min || max)) {
-          switch (type) {
-            case "number":
-            case "range":
-              value = !!value ? parseFloat(value) : undefined;
-              min = !!min ? parseFloat(min) : undefined;
-              max = !!max ? parseFloat(max) : undefined;
-              break;
-
-            case "month":
-            case "date":
-              value = !!value ? new Date(value).getTime() : undefined;
-              min = !!min ? new Date(min).getTime() : undefined;
-              max = !!max ? new Date(max).getTime() : undefined;
-              break;
-
-            case "week":
-              value = !!value ? value.split("-W") : undefined;
-              value = value ? new Date(parseInt(value[0], 10), 0, 1 + (parseInt(value[1], 10) - 1) * 7) : undefined;
-
-              min = !!min ? min.split("-W") : undefined;
-              min = min ? new Date(parseInt(min[0], 10), 0, 1 + (parseInt(min[1], 10) - 1) * 7) : undefined;
-
-              max = !!max ? max.split("-W") : undefined;
-              max = max ? new Date(parseInt(max[0], 10), 0, 1 + (parseInt(max[1], 10) - 1) * 7) : undefined;
-              break;
-
-            case "datetime-local":
-            case "datetime":
-              break;
-
-            case "time":
-              break;
-          }
-
-          if (isNaN(value) || isNaN(min) && isNaN(max)) return undefined;
-
-          if (!isNaN(min)) isOut = min > value;
-
-          if (!isOut && !isNaN(max)) isOut = value > max;
-
-          return isOut;
+          return element.validity.rangeOverflow || element.validity.rangeUnderflow;
         }
       }
       return undefined;
+    }
+
+    /**
+     * Check if element is actually in range
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isInRange",
+    value: function isInRange(element) {
+      var types = ["number", "range", "date", "datetime", "datetime-local", "month", "time", "week"],
+          type = void 0,
+          min = void 0,
+          max = void 0;
+      if (element.tagName === "INPUT" && element.validity) {
+        type = element.getAttribute("type");
+        min = element.getAttribute("min");
+        max = element.getAttribute("max");
+
+        if (type && types.indexOf(type.toLowerCase()) > -1 && (min || max)) {
+          return !element.validity.rangeOverflow && !element.validity.rangeUnderflow;
+        }
+      }
+      return undefined;
+    }
+
+    /**
+     * Check if element is actually invalid
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isInvalid",
+    value: function isInvalid(element) {
+      return element.validity ? element.validity.valid === false : false;
+    }
+
+    /**
+     * Check if element is actually valid
+     * @param element
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isValid",
+    value: function isValid(element) {
+      return element.validity ? element.validity.valid === true : false;
+    }
+
+    /**
+     * Checks if element is matching a target lang
+     * @param element
+     * @param params
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isLang",
+    value: function isLang(element, params) {
+      if (params && params.length === 1 && params[0].type === "type") {
+        var elem = element,
+            lang = void 0;
+        while (elem) {
+          if (lang = elem.getAttribute("lang")) {
+            if ((lang = lang.toLowerCase()) === params[0].value.toLowerCase() || lang.indexOf(params[0].value.toLowerCase() + "-") === 0) {
+              return true;
+            }
+          }
+          elem = elem.parentElement;
+        }
+      }
+      return false;
+    }
+
+    /**
+     * Check if element is actually not matching target param
+     * @param element
+     * @param params
+     */
+
+  }, {
+    key: "isNot",
+    value: function isNot(element, params) {
+      if (params && params.length === 1) {
+        return this.matchSelectorToken(element, params[0]) === false;
+      }
+      return false;
+    }
+
+    /**
+     * Check if element is actually an nth child of its parent
+     * @param element
+     * @param params
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isNthChild",
+    value: function isNthChild(element, params, inverseFlag) {
+      if (params && params.length) {
+        var parent = element.parentElement,
+            index = void 0,
+            a = void 0,
+            b = void 0,
+            length = parent.childNodes.length,
+            n = 0;
+
+        switch (params.length) {
+          case 3:
+            if (params[2].value[params[2].value.length - 1] !== "n") return false;
+            a = parseInt(params[2].value, 10) || (params[2].value[0] === "-" ? -1 : 1);
+            b = parseInt(params[0].value, 10) || 0;
+            break;
+          case 1:
+            if (params[0].value.toLowerCase() === "odd") {
+              a = 2;
+              b = 1;
+            } else if (params[0].value.toLowerCase() === "even") {
+              a = 2;
+              b = 0;
+            } else if ((index = params[0].value.indexOf("-")) > 0) {
+              a = parseInt(params[0].value.substring(0, index), 10) || 1;
+              b = parseInt(params[0].value.substring(index), 10) || 0;
+            } else if (params[0].value[params[0].value.length - 1] === "n") {
+              a = parseInt(params[0].value, 10) || (params[0].value[0] === "-" ? -1 : 1);
+              b = 0;
+            } else {
+              a = 0;
+              b = parseInt(params[0].value, 10);
+            }
+            break;
+          default:
+            return false;
+        }
+
+        if (isNaN(a) || isNaN(b)) return false;
+
+        if (a) {
+          while (n < length) {
+            index = a * n + b;
+            if (parent.childNodes[inverseFlag ? length - index : index - 1] === element) return true;
+            n = n + 1;
+          }
+        } else {
+          return parent.childNodes[b - 1] === element;
+        }
+      }
+      return false;
+    }
+
+    /**
+     * Check if element is actually an nth last child of its parent
+     * @param element
+     * @param params
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isNthLastChild",
+    value: function isNthLastChild(element, params) {
+      return this.isNthChild(element, params, true);
     }
 
     /**
@@ -512,14 +632,15 @@ var SelectorChecker = function () {
      * @param element
      * @param value
      * @param statesMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
-     * @returns {boolean}
+     * @param params - a set of any additional params tokenized inside tokenization scopes
+     * @returns {boolean|undefined}
      *
      * @throws TypeError - when unknown token type was spotted
      */
 
   }, {
     key: "matchPseudoSelector",
-    value: function matchPseudoSelector(element, value, statesMap) {
+    value: function matchPseudoSelector(element, value, statesMap, params) {
       switch (value) {
         case ":first-child":
           return this.isFirstChild(element);
@@ -557,6 +678,20 @@ var SelectorChecker = function () {
           return this.isTarget(element);
         case ":out-of-range":
           return this.isOutOfRange(element);
+        case ":in-range":
+          return this.isInRange(element);
+        case ":invalid":
+          return this.isInvalid(element);
+        case ":valid":
+          return this.isValid(element);
+        case ":lang":
+          return this.isLang(element, params);
+        case ":not":
+          return this.isNot(element, params);
+        case ":nth-child":
+          return this.isNthChild(element, params);
+        case ":nth-last-child":
+          return this.isNthLastChild(element, params);
 
         // TODO: Add in feature releases
         case ":any":
@@ -565,10 +700,11 @@ var SelectorChecker = function () {
         case ":first":
         case ":fullscreen":
         case ":scope":
-          return undefined;
+          return false;
 
+        // Ignore all other pseudo-classes and pseudo-elements
         default:
-          throw new TypeError("Unexpected pseudo " + value + " to match");
+          return false;
       }
     }
 
@@ -577,6 +713,7 @@ var SelectorChecker = function () {
      * @param element
      * @param token
      * @param statesMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
+     * @param params - a set of any additional params tokenized inside tokenization scopes
      * @returns {boolean}
      *
      * @throws TypeError - when unknown token type was spotted
@@ -584,7 +721,7 @@ var SelectorChecker = function () {
 
   }, {
     key: "matchSelectorToken",
-    value: function matchSelectorToken(element, token, statesMap) {
+    value: function matchSelectorToken(element, token, statesMap, params) {
       switch (token.type) {
         case TYPE_SELECTOR:
           return this.matchTagName(element, token.value);
@@ -599,10 +736,10 @@ var SelectorChecker = function () {
           return this.matchAttribute(element, token.value);
 
         case PSEUDO_SELECTOR:
-          return this.matchPseudoSelector(element, token.value);
+          return this.matchPseudoSelector(element, token.value, statesMap, params);
 
         default:
-          throw new TypeError("Unexpected token " + token + " to match");
+          throw new TypeError("Unexpected token " + token.value + " to match");
       }
     }
 
@@ -708,13 +845,26 @@ var SelectorChecker = function () {
       var tokens = this.tokenizer.tokenize(selector),
           token = void 0,
           i = void 0,
-          attrs = void 0,
+          params = void 0,
           matches = void 0,
           elem = element;
 
       // While has next token
       while (token = tokens.pop()) {
-        matches = this.matchSelectorToken(elem, token, statesMap);
+
+        if (token.type === SCOPE_ENDING_POINT) {
+          params = [];
+          while ((token = tokens.pop()).type !== SCOPE_STARTING_POINT) {
+            params.push(token);
+          }
+
+          // Read token which is starting a scope
+          token = tokens.pop();
+
+          matches = this.matchSelectorToken(elem, token, statesMap, params);
+        } else {
+          matches = this.matchSelectorToken(elem, token, statesMap);
+        }
 
         // Stop looping on first mismatch
         if (!matches) {
