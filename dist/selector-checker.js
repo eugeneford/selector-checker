@@ -511,7 +511,7 @@ var SelectorChecker = function () {
             n = n + 1;
           }
         } else {
-          return parent.childNodes[b - 1] === element;
+          return parent.childNodes[inverseFlag ? length - b : b - 1] === element;
         }
       }
       return false;
@@ -528,6 +528,90 @@ var SelectorChecker = function () {
     key: "isNthLastChild",
     value: function isNthLastChild(element, params) {
       return this.isNthChild(element, params, true);
+    }
+
+    /**
+     * Check if element is actually an nth of type of its parent
+     * @param element
+     * @param params
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isNthOfType",
+    value: function isNthOfType(element, params, inverseFlag) {
+      if (params && params.length) {
+        var parent = element.parentElement,
+            index = void 0,
+            a = void 0,
+            b = void 0,
+            n = 0,
+            nodes = void 0,
+            i = void 0;
+
+        switch (params.length) {
+          case 3:
+            if (params[2].value[params[2].value.length - 1] !== "n") return false;
+            a = parseInt(params[2].value, 10) || (params[2].value[0] === "-" ? -1 : 1);
+            b = parseInt(params[0].value, 10) || 0;
+            break;
+          case 1:
+            if (params[0].value.toLowerCase() === "odd") {
+              a = 2;
+              b = 1;
+            } else if (params[0].value.toLowerCase() === "even") {
+              a = 2;
+              b = 0;
+            } else if ((index = params[0].value.indexOf("-")) > 0) {
+              a = parseInt(params[0].value.substring(0, index), 10) || 1;
+              b = parseInt(params[0].value.substring(index), 10) || 0;
+            } else if (params[0].value[params[0].value.length - 1] === "n") {
+              a = parseInt(params[0].value, 10) || (params[0].value[0] === "-" ? -1 : 1);
+              b = 0;
+            } else {
+              a = 0;
+              b = parseInt(params[0].value, 10);
+            }
+            break;
+          default:
+            return false;
+        }
+
+        if (isNaN(a) || isNaN(b)) return false;
+
+        // Filter node of type
+        nodes = [];
+        for (i = 0; i < parent.childNodes.length; i++) {
+          if (parent.childNodes[i].tagName === element.tagName) {
+            nodes.push(parent.childNodes[i]);
+          }
+        }
+
+        // Check if element is a nth of its parent
+        if (a) {
+          while (n < nodes.length) {
+            index = a * n + b;
+            if (nodes[inverseFlag ? nodes.length - index : index - 1] === element) return true;
+            n = n + 1;
+          }
+        } else {
+          return nodes[inverseFlag ? nodes.length - b : b - 1] === element;
+        }
+      }
+      return false;
+    }
+
+    /**
+     * Check if element is actually an nth of type of its parent
+     * @param element
+     * @param params
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isNthLastOfType",
+    value: function isNthLastOfType(element, params) {
+      return this.isNthOfType(element, params, true);
     }
 
     /**
@@ -692,6 +776,10 @@ var SelectorChecker = function () {
           return this.isNthChild(element, params);
         case ":nth-last-child":
           return this.isNthLastChild(element, params);
+        case ":nth-of-type":
+          return this.isNthOfType(element, params);
+        case ":nth-last-of-type":
+          return this.isNthLastOfType(element, params);
 
         // TODO: Add in feature releases
         case ":any":

@@ -3269,7 +3269,379 @@ describe('SelectorChecker', () => {
     });
   });
 
+  describe('isNthOfType', () => {
+    it('div>span+span+p+p+span+p.target matches p:nth-of-type(2n+1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+
+      selector = "p:nth-of-type(2n+1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-of-type(2n+1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-of-type(2n+1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-of-type(1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-of-type(1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-of-type(odd) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-of-type(odd)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p+span+p+p.target matches p:nth-of-type(even) ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(element);
+
+      selector = "p:nth-of-type(even)";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p+span+p.target+p matches p:nth-of-type(2n) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-of-type(2n)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-of-type(-n+1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-of-type(-n+1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-of-type(2n-1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-of-type(2n-1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
+
+  describe('isNthLastOfType', () => {
+    it('div>span+span+p+span+p+p.target matches p:nth-last-of-type(-n+1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(element);
+
+      selector = "p:nth-last-of-type(-n+1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p+span+p+p.target matches p:nth-last-of-type(2n-1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(element);
+
+      selector = "p:nth-last-of-type(2n-1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p+span+p.target+p matches p:nth-last-of-type(2n) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-last-of-type(2n)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p+span+p+p.target matches p:nth-last-of-type(even) ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(element);
+
+      selector = "p:nth-last-of-type(even)";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-last-of-type(odd) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-last-of-type(odd)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-last-of-type(1) ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-last-of-type(1)";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-last-of-type(3) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-last-of-type(3)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div>span+span+p.target+p+span+p matches p:nth-last-of-type(2n+1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+      element.setAttribute("class", "target");
+
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(document.createElement("span"));
+      parent.appendChild(document.createElement("p"));
+
+      selector = "p:nth-last-of-type(2n+1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
+
   describe('check', () => {
 
-  });
+  }); 
 });

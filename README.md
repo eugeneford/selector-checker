@@ -48,6 +48,8 @@ Link | :link | Yes (via StateMap)
 Not | :not | Yes
 Nth Child | :nth-child | Yes
 Nth Last Child | :nth-last-child | Yes
+Nth Of Type | :nth-of-type | Yes
+Nth Last Of Type | :nth-last-of-type | Yes
 Only Child | :only-child | Yes
 Only Of Type | :only-of-type | Yes
 Optional | :optional | Yes
