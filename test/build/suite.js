@@ -47,6 +47,7 @@ function _classCallCheck(instance, Constructor) {
 }
 
 var TYPE_SELECTOR = "type";
+var ID_SELECTOR = "id";
 var CLASS_SELECTOR = "class";
 var ATTRIBUTE_SELECTOR = "attribute";
 var UNIVERSAL_SELECTOR = "universal";
@@ -107,7 +108,7 @@ var SelectorChecker = function () {
   _createClass(SelectorChecker, [{
     key: "isFirstChild",
     value: function isFirstChild(element) {
-      return element.parentElement && element.parentElement.children[0] === element;
+      return element && element.parentElement && element.parentElement.children[0] === element;
     }
 
     /**
@@ -119,7 +120,7 @@ var SelectorChecker = function () {
   }, {
     key: "isLastChild",
     value: function isLastChild(element) {
-      return element.parentElement && element.parentElement.children[element.parentElement.children.length - 1] === element;
+      return element && element.parentElement && element.parentElement.children[element.parentElement.children.length - 1] === element;
     }
 
     /**
@@ -134,11 +135,11 @@ var SelectorChecker = function () {
       var group = void 0,
           i = void 0;
       // Any <input type="checkbox"> element whose indeterminate DOM property is set to true by JavaScript
-      if (element.tagName === "INPUT" && element.getAttribute("type") === "checkbox") {
+      if (element && element.tagName === "INPUT" && element.getAttribute("type") === "checkbox") {
         return element.indeterminate === true;
       }
       // <input type="radio"> elements whose radio button group's radio buttons are all unchecked
-      else if (element.tagName === "INPUT" && element.getAttribute("type") === "radio") {
+      else if (element && element.tagName === "INPUT" && element.getAttribute("type") === "radio") {
           if (group = element.getAttribute("name")) {
             group = element.ownerDocument.querySelectorAll("input[type=\"radio\"][name=\"" + group + "\"]");
             for (i = 0; i < group.length; i++) {
@@ -148,7 +149,7 @@ var SelectorChecker = function () {
           return element.checked === false;
         }
         // <progress> elements in an indeterminate state
-        else if (element.tagName === "PROGRESS") {
+        else if (element && element.tagName === "PROGRESS") {
             return !element.hasAttribute("value");
           }
       // Otherwise, return false
@@ -165,9 +166,9 @@ var SelectorChecker = function () {
     key: "isChecked",
     value: function isChecked(element) {
       var type = element.getAttribute("type");
-      if (element.tagName === "INPUT" && (type = type.toLowerCase() === "checkbox" || type === "radio")) {
+      if (element && element.tagName === "INPUT" && (type = type.toLowerCase() === "checkbox" || type === "radio")) {
         return element.checked === true;
-      } else if (element.tagName === "OPTION") {
+      } else if (element && element.tagName === "OPTION") {
         return element.selected === true;
       }
       return false;
@@ -225,10 +226,13 @@ var SelectorChecker = function () {
     key: "isFirstOfType",
     value: function isFirstOfType(element) {
       var elem = element;
-      while (elem = elem.previousElementSibling) {
-        if (elem.tagName === element.tagName) return false;
+      if (element) {
+        while (elem = elem.previousElementSibling) {
+          if (elem.tagName === element.tagName) return false;
+        }
+        return true;
       }
-      return true;
+      return false;
     }
 
     /**
@@ -241,10 +245,13 @@ var SelectorChecker = function () {
     key: "isLastOfType",
     value: function isLastOfType(element) {
       var elem = element;
-      while (elem = elem.nextElementSibling) {
-        if (elem.tagName === element.tagName) return false;
+      if (element) {
+        while (elem = elem.nextElementSibling) {
+          if (elem.tagName === element.tagName) return false;
+        }
+        return true;
       }
-      return true;
+      return false;
     }
 
     /**
@@ -281,7 +288,7 @@ var SelectorChecker = function () {
     key: "isRequired",
     value: function isRequired(element) {
       var elements = ["input", "select", "textarea"];
-      return elements.indexOf(element.tagName.toLowerCase()) > -1 && element.hasAttribute("required");
+      return element && elements.indexOf(element.tagName.toLowerCase()) > -1 && element.hasAttribute("required");
     }
 
     /**
@@ -294,7 +301,7 @@ var SelectorChecker = function () {
     key: "isOptional",
     value: function isOptional(element) {
       var elements = ["input", "select", "textarea"];
-      return elements.indexOf(element.tagName.toLowerCase()) > -1 && !element.hasAttribute("required");
+      return element && elements.indexOf(element.tagName.toLowerCase()) > -1 && !element.hasAttribute("required");
     }
 
     /**
@@ -309,15 +316,15 @@ var SelectorChecker = function () {
       var types = ["text", "email", "date", "time", "url", "search", "number", "week", "month", "tel"],
           type = element.getAttribute("type");
 
-      if (element.tagName === "TEXTAREA") {
+      if (element && element.tagName === "TEXTAREA") {
         return !element.hasAttribute("readonly");
-      } else if (element.tagName === "INPUT") {
+      } else if (element && element.tagName === "INPUT") {
         if (type && types.indexOf(type.toLowerCase()) === -1) {
           return false;
         }
         return !element.hasAttribute("readonly");
       }
-      return element.hasAttribute("contenteditable");
+      return element && element.hasAttribute("contenteditable");
     }
 
     /**
@@ -341,7 +348,7 @@ var SelectorChecker = function () {
   }, {
     key: "isRoot",
     value: function isRoot(element) {
-      return element.ownerDocument.documentElement === element;
+      return element && element.ownerDocument.documentElement === element;
     }
 
     /**
@@ -353,7 +360,7 @@ var SelectorChecker = function () {
   }, {
     key: "isTarget",
     value: function isTarget(element) {
-      return element.hasAttribute("id") && "#" + element.getAttribute("id") === element.ownerDocument.location.hash;
+      return element && element.hasAttribute("id") && "#" + element.getAttribute("id") === element.ownerDocument.location.hash;
     }
 
     /**
@@ -369,7 +376,7 @@ var SelectorChecker = function () {
           type = void 0,
           min = void 0,
           max = void 0;
-      if (element.tagName === "INPUT" && element.validity) {
+      if (element && element.tagName === "INPUT" && element.validity) {
         type = element.getAttribute("type");
         min = element.getAttribute("min");
         max = element.getAttribute("max");
@@ -378,7 +385,7 @@ var SelectorChecker = function () {
           return element.validity.rangeOverflow || element.validity.rangeUnderflow;
         }
       }
-      return undefined;
+      return false;
     }
 
     /**
@@ -403,7 +410,7 @@ var SelectorChecker = function () {
           return !element.validity.rangeOverflow && !element.validity.rangeUnderflow;
         }
       }
-      return undefined;
+      return false;
     }
 
     /**
@@ -415,7 +422,7 @@ var SelectorChecker = function () {
   }, {
     key: "isInvalid",
     value: function isInvalid(element) {
-      return element.validity ? element.validity.valid === false : false;
+      return element && element.validity ? element.validity.valid === false : false;
     }
 
     /**
@@ -427,7 +434,7 @@ var SelectorChecker = function () {
   }, {
     key: "isValid",
     value: function isValid(element) {
-      return element.validity ? element.validity.valid === true : false;
+      return element && element.validity ? element.validity.valid === true : false;
     }
 
     /**
@@ -629,6 +636,19 @@ var SelectorChecker = function () {
     }
 
     /**
+     * Check if element is in a state map
+     * @param element
+     * @param value
+     * @param stateMap
+     */
+
+  }, {
+    key: "isInStateMap",
+    value: function isInStateMap(element, value, stateMap) {
+      return element && stateMap && stateMap[value] && stateMap[value].length && stateMap[value].indexOf(element) > -1;
+    }
+
+    /**
      * Check if specified tagName matches element
      * @param element
      * @param tagName
@@ -638,7 +658,7 @@ var SelectorChecker = function () {
   }, {
     key: "matchTagName",
     value: function matchTagName(element, tagName) {
-      return element.tagName.toLowerCase() === tagName.toLowerCase();
+      return element && element.tagName.toLowerCase() === tagName.toLowerCase();
     }
 
     /**
@@ -650,7 +670,19 @@ var SelectorChecker = function () {
   }, {
     key: "matchClassName",
     value: function matchClassName(element, className) {
-      return element.getAttribute("class").split(/\s+/).indexOf(className.substr(1)) > -1;
+      return element && element.hasAttribute("class") ? element.getAttribute("class").split(/\s+/).indexOf(className.substr(1)) > -1 : false;
+    }
+
+    /**
+     * Check if element actually has a specified id
+     * @param element
+     * @param id
+     */
+
+  }, {
+    key: "matchID",
+    value: function matchID(element, id) {
+      return element && element.hasAttribute("id") && element.getAttribute("id").toLowerCase() === id.toLowerCase().substring(1);
     }
 
     /**
@@ -670,7 +702,7 @@ var SelectorChecker = function () {
       switch (tokens.length) {
         // Proceed with [attr] case
         case 1:
-          return element.hasAttribute(tokens[0]);
+          return element && element.hasAttribute(tokens[0]);
           break;
 
         // TODO: Update this fragment on CSS4 Spec release
@@ -680,10 +712,10 @@ var SelectorChecker = function () {
           // Process element by attribute operator type
           switch (tokens[1]) {
             case "=":
-              return element.getAttribute(tokens[0]).toLowerCase() === tokens[2].toLowerCase();
+              return element && element.hasAttribute(tokens[0]) ? element.getAttribute(tokens[0]).toLowerCase() === tokens[2].toLowerCase() : false;
               break;
             case "~=":
-              if (elementValue = element.getAttribute(tokens[0])) {
+              if (element && (elementValue = element.getAttribute(tokens[0]))) {
                 elementValue = elementValue.split(/\s+/);
                 for (i = 0; i < elementValue.length; i++) {
                   if (elementValue[i].toLowerCase() === tokens[2].toLowerCase()) return true;
@@ -692,26 +724,26 @@ var SelectorChecker = function () {
               return false;
               break;
             case "|=":
-              if (elementValue = element.getAttribute(tokens[0])) {
+              if (element && (elementValue = element.getAttribute(tokens[0]))) {
                 elementValue = elementValue.split(/\s+/);
                 if (elementValue[0].toLowerCase() === tokens[2].toLowerCase() || elementValue[0].toLowerCase().indexOf(tokens[2].toLowerCase() + "-") === 0) return true;
               }
               return false;
               break;
             case "^=":
-              if (elementValue = element.getAttribute(tokens[0])) {
+              if (element && (elementValue = element.getAttribute(tokens[0]))) {
                 elementValue = elementValue.split(/\s+/);
                 if (elementValue[0].toLowerCase().indexOf("" + tokens[2].toLowerCase()) === 0) return true;
               }
               break;
             case "$=":
-              if (elementValue = element.getAttribute(tokens[0])) {
+              if (element && (elementValue = element.getAttribute(tokens[0]))) {
                 elementValue = elementValue.split(/\s+/);
                 if (elementValue[elementValue.length - 1].toLowerCase().indexOf("" + tokens[2].toLowerCase()) === elementValue[elementValue.length - 1].length - tokens[2].length) return true;
               }
               break;
             case "*=":
-              return element.getAttribute(tokens[0]).toLowerCase().indexOf(tokens[2].toLowerCase()) > -1;
+              return element && element.hasAttribute(tokens[0]) ? element.getAttribute(tokens[0]).toLowerCase().indexOf(tokens[2].toLowerCase()) > -1 : false;
               break;
             default:
               throw new Error("Parse error on " + value);
@@ -794,6 +826,14 @@ var SelectorChecker = function () {
           return this.isNthOfType(element, params);
         case ":nth-last-of-type":
           return this.isNthLastOfType(element, params);
+        case ":hover":
+        case ":focus":
+        case ":active":
+        case ":visited":
+          return this.isInStateMap(element, value, statesMap);
+
+        case ":link":
+          return !this.isInStateMap(element, ":visited", statesMap);
 
         // TODO: Add in feature releases
         case ":any":
@@ -816,6 +856,7 @@ var SelectorChecker = function () {
      * @param token
      * @param statesMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
      * @param params - a set of any additional params tokenized inside tokenization scopes
+     * @param tokens - a set of remaining tokens
      * @returns {boolean}
      *
      * @throws TypeError - when unknown token type was spotted
@@ -823,22 +864,38 @@ var SelectorChecker = function () {
 
   }, {
     key: "matchSelectorToken",
-    value: function matchSelectorToken(element, token, statesMap, params) {
+    value: function matchSelectorToken(element, token, stateMap, params, tokens) {
       switch (token.type) {
         case TYPE_SELECTOR:
           return this.matchTagName(element, token.value);
+
+        case ID_SELECTOR:
+          return this.matchID(element, token.value);
 
         case CLASS_SELECTOR:
           return this.matchClassName(element, token.value);
 
         case UNIVERSAL_SELECTOR:
-          return true;
+          return element ? true : false;
 
         case ATTRIBUTE_SELECTOR:
           return this.matchAttribute(element, token.value);
 
         case PSEUDO_SELECTOR:
-          return this.matchPseudoSelector(element, token.value, statesMap, params);
+          return this.matchPseudoSelector(element, token.value, stateMap, params);
+
+        case SCOPE_ENDING_POINT:
+          if (!tokens || !tokens.length) return false;
+
+          params = [];
+          while ((token = tokens.pop()).type !== SCOPE_STARTING_POINT) {
+            params.push(token);
+          }
+
+          // Read token which is starting a scope
+          token = tokens.pop();
+
+          return this.matchSelectorToken(element, token, stateMap, params);
 
         default:
           throw new TypeError("Unexpected token " + token.value + " to match");
@@ -931,7 +988,7 @@ var SelectorChecker = function () {
      * Check if specified element matches target css selector
      * @param element
      * @param selector
-     * @param statesMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
+     * @param stateMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
      * @returns {boolean}
      *
      * @example
@@ -943,38 +1000,78 @@ var SelectorChecker = function () {
 
   }, {
     key: "check",
-    value: function check(element, selector, statesMap) {
-      var tokens = this.tokenizer.tokenize(selector),
-          token = void 0,
-          i = void 0,
-          params = void 0,
+    value: function check(element, selector, stateMap) {
+      var tokens = this.tokenizer.tokenize(selector);
+      var token = void 0,
           matches = void 0,
           elem = element;
 
       // While has next token
       while (token = tokens.pop()) {
+        // Reset matching holder
+        matches = false;
 
-        if (token.type === SCOPE_ENDING_POINT) {
-          params = [];
-          while ((token = tokens.pop()).type !== SCOPE_STARTING_POINT) {
-            params.push(token);
-          }
+        // Switch through token type
+        switch (token.type) {
+          case ADJACENT_SIBLING_COMBINATOR:
+            if (!(elem = elem.previousElementSibling)) return false;
+            matches = this.matchSelectorToken(elem, tokens.pop(), stateMap, null, tokens);
+            break;
 
-          // Read token which is starting a scope
-          token = tokens.pop();
+          case DESCENDANT_COMBINATOR:
+            token = tokens.pop();
+            while (elem = elem.parentElement) {
+              if (matches = this.matchSelectorToken(elem, token, stateMap, null, tokens)) break;
+            }
+            break;
 
-          matches = this.matchSelectorToken(elem, token, statesMap, params);
-        } else {
-          matches = this.matchSelectorToken(elem, token, statesMap);
+          case GENERAL_SIBLING_COMBINATOR:
+            token = tokens.pop();
+            while (elem = elem.previousElementSibling) {
+              if (matches = this.matchSelectorToken(elem, token, stateMap, null, tokens)) break;
+            }
+            break;
+
+          case CHILD_COMBINATOR:
+            if (!(elem = elem.parentElement)) return false;
+            matches = this.matchSelectorToken(elem, tokens.pop(), stateMap, null, tokens);
+            break;
+
+          default:
+            matches = this.matchSelectorToken(elem, token, stateMap, null, tokens);
+            break;
         }
 
         // Stop looping on first mismatch
-        if (!matches) {
-          return false;
-        }
+        if (!matches) return false;
       }
-
       return true;
+    }
+
+    /**
+     * Check if specified element matches target multiple css selector
+     * @param element
+     * @param multipleSelector
+     * @param stateMap - optional map of elements with forced interactive states (:hover, :focus, :active, :visited)
+     * @returns {boolean}
+     *
+     * @example
+     * checker = new SelectorChecker();
+     * element = document.getElementById("target"); //=> <h1 class="heading-1">...</h1>
+     * matches = checker.checkAll(element, "div, h1");
+     * matches   //=> true
+     */
+
+  }, {
+    key: "checkAll",
+    value: function checkAll(element, multipleSelector, stateMap) {
+      var selectors = multipleSelector.split(/\s*,\s*/),
+          i = void 0;
+      for (i = 0; i < selectors.length; i++) {
+        console.log(selectors[i]);
+        if (this.check(element, selectors[i], stateMap)) return true;
+      }
+      return false;
     }
   }]);
 
@@ -1591,6 +1688,41 @@ describe('SelectorChecker', function () {
             });
       });
 
+      describe('matchID', function () {
+            it('h1#example matches #example ==> true', function () {
+                  var element = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  element = document.createElement("h1");
+                  element.setAttribute("id", "example");
+                  selector = "#example";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('h1 matches #example ==> false', function () {
+                  var element = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  element = document.createElement("h1");
+                  selector = "#example";
+                  expectedResult = false;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
       describe('matchClassName', function () {
             it('div.post matches .post ==> true', function () {
                   var element = void 0,
@@ -1995,6 +2127,282 @@ describe('SelectorChecker', function () {
                   expectedResult = false;
 
                   actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('isHover', function () {
+            it('button:hover matches button:hover ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:hover";
+                  expectedResult = true;
+
+                  stateMap = {
+                        ":hover": [element]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('button matches button:hover ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:hover";
+                  expectedResult = false;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('isFocus', function () {
+            it('button:focus matches button:focus ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:focus";
+                  expectedResult = true;
+
+                  stateMap = {
+                        ":focus": [element]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('button matches button:focus ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:focus";
+                  expectedResult = false;
+
+                  stateMap = {
+                        ":focus": [parent]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('isActive', function () {
+            it('button:active matches button:active ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:active";
+                  expectedResult = true;
+
+                  stateMap = {
+                        ":active": [element]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('button matches button:active ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:active";
+                  expectedResult = false;
+
+                  stateMap = {
+                        ":active": [parent]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('isVisited', function () {
+            it('button:visited matches button:visited ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:visited";
+                  expectedResult = true;
+
+                  stateMap = {
+                        ":visited": [element]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('button matches button:visited ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:visited";
+                  expectedResult = false;
+
+                  stateMap = {
+                        ":active": [parent]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('isActive', function () {
+            it('button:link matches button:link ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:link";
+                  expectedResult = true;
+
+                  stateMap = {
+                        ":hover": [element]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('button matches button:link ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      stateMap = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("section");
+                  element = document.createElement("button");
+
+                  parent.appendChild(document.createTextNode("text"));
+                  parent.appendChild(element);
+
+                  selector = "button:link";
+                  expectedResult = false;
+
+                  stateMap = {
+                        ":visited": [element]
+                  };
+
+                  actualResult = checker.check(element, selector, stateMap);
 
                   expect(actualResult).toBe(expectedResult);
             });
@@ -6081,7 +6489,390 @@ describe('SelectorChecker', function () {
             });
       });
 
-      describe('check', function () {});
+      describe('check => CHILD_COMBINATOR', function () {
+            it('div>p matches div > p:first-child ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+
+                  element = document.createElement("p");
+
+                  parent.appendChild(element);
+
+                  selector = "div>p:first-child";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('main>div>p matches main > div:nth-child(1) > p:nth-of-type(2n+1) ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+
+                  element = document.createElement("p");
+
+                  document.createElement("main").appendChild(parent);
+                  parent.appendChild(element);
+
+                  selector = "main > div:nth-child(1) > p:nth-of-type(2n+1)";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('div.test > p matches .example > p:last-child ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("class", "test");
+
+                  element = document.createElement("p");
+
+                  parent.appendChild(element);
+
+                  selector = ".example > p:last-child";
+                  expectedResult = false;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('div.test > p matches .test > * ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("class", "test");
+
+                  element = document.createElement("p");
+
+                  parent.appendChild(element);
+
+                  selector = ".test > *";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('check => ADJACENT_SIBLING_COMBINATOR', function () {
+            it('div.test > h1 + p matches .test > h1 + p ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("class", "test");
+
+                  element = document.createElement("p");
+
+                  parent.appendChild(document.createElement("h1"));
+                  parent.appendChild(element);
+
+                  selector = ".test > h1 + p";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('div.test > p matches .test > * + p ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("class", "test");
+
+                  element = document.createElement("p");
+
+                  parent.appendChild(element);
+
+                  selector = ".test > * + p";
+                  expectedResult = false;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('div.test > h1 + p matches .test > * + * ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("class", "test");
+
+                  element = document.createElement("p");
+
+                  parent.appendChild(document.createElement("h1"));
+                  parent.appendChild(element);
+
+                  selector = "div > * + *";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('div.test > p matches .test > p + * ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("class", "test");
+
+                  element = document.createElement("p");
+
+                  parent.appendChild(element);
+
+                  selector = "div > p + *";
+                  expectedResult = false;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('check => DESCENDANT_COMBINATOR', function () {
+            it('main>section>article>h1 matches section h1 ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      parent2 = void 0,
+                      parent3 = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent3 = document.createElement("main");
+                  parent2 = document.createElement("section");
+                  parent = document.createElement("article");
+                  element = document.createElement("h1");
+
+                  parent3.appendChild(parent2);
+                  parent2.appendChild(parent);
+                  parent.appendChild(element);
+
+                  selector = "section h1";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('main.page>section>article>h1 matches .page h1 ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      parent2 = void 0,
+                      parent3 = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent3 = document.createElement("main");
+                  parent2 = document.createElement("section");
+                  parent = document.createElement("article");
+                  element = document.createElement("h1");
+
+                  parent3.setAttribute("class", "page");
+
+                  parent3.appendChild(parent2);
+                  parent2.appendChild(parent);
+                  parent.appendChild(element);
+
+                  selector = ".page h1";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('main.page>section>article>h1 matches [lang=en] h1 ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      parent2 = void 0,
+                      parent3 = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent3 = document.createElement("main");
+                  parent2 = document.createElement("section");
+                  parent = document.createElement("article");
+                  element = document.createElement("h1");
+
+                  parent3.setAttribute("class", "page");
+
+                  parent3.appendChild(parent2);
+                  parent2.appendChild(parent);
+                  parent.appendChild(element);
+
+                  selector = "[lang=en] h1";
+                  expectedResult = false;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('check => GENERAL_SIBLING_COMBINATOR', function () {
+            it('div#example > h1 + p + a.btn matches #example h1 ~ .btn[href=\'#\'] ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("id", "example");
+
+                  element = document.createElement("a");
+                  element.setAttribute("class", "btn");
+                  element.setAttribute("href", "#");
+
+                  parent.appendChild(document.createElement("h1"));
+                  parent.appendChild(document.createElement("p"));
+                  parent.appendChild(element);
+
+                  selector = "#example h1 ~ .btn[href=\'#\']";
+                  expectedResult = true;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('div#example > h1 + p + a.btn matches #example h1 ~ footer ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("id", "example");
+
+                  element = document.createElement("a");
+                  element.setAttribute("class", "btn");
+                  element.setAttribute("href", "#");
+
+                  parent.appendChild(document.createElement("h1"));
+                  parent.appendChild(document.createElement("p"));
+                  parent.appendChild(element);
+
+                  selector = "#example h1 ~ footer";
+                  expectedResult = false;
+
+                  actualResult = checker.check(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
+
+      describe('checkAll', function () {
+            it('div#example > h1 + p + a.btn matches #example p, #example .btn[href="#"] ==> true', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("id", "example");
+
+                  element = document.createElement("a");
+                  element.setAttribute("class", "btn");
+                  element.setAttribute("href", "#");
+
+                  parent.appendChild(document.createElement("h1"));
+                  parent.appendChild(document.createElement("p"));
+                  parent.appendChild(element);
+
+                  selector = "#example p, #example .btn[href=\"#\"]";
+                  expectedResult = true;
+
+                  actualResult = checker.checkAll(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+
+            it('div#example > h1 + p + a.btn matches #test h1, article ==> false', function () {
+                  var element = void 0,
+                      parent = void 0,
+                      selector = void 0,
+                      actualResult = void 0,
+                      expectedResult = void 0,
+                      checker = new _selectorChecker2.default();
+
+                  parent = document.createElement("div");
+                  parent.setAttribute("id", "example");
+
+                  element = document.createElement("h1");
+
+                  parent.appendChild(element);
+                  parent.appendChild(document.createElement("p"));
+
+                  selector = "#test h1, article";
+                  expectedResult = false;
+
+                  actualResult = checker.checkAll(element, selector);
+
+                  expect(actualResult).toBe(expectedResult);
+            });
+      });
 });
 
 },{"../../../dist/selector-checker.js":1}],4:[function(require,module,exports){

@@ -106,6 +106,33 @@ describe('SelectorChecker', () => {
     });
   });
 
+  describe('matchID', () => {
+    it('h1#example matches #example ==> true', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("h1");
+      element.setAttribute("id", "example");
+      selector = "#example";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('h1 matches #example ==> false', () => {
+      let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      element = document.createElement("h1");
+      selector = "#example";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
+
   describe('matchClassName', () => {
     it('div.post matches .post ==> true', () => {
       let element, selector, actualResult, expectedResult, checker = new SelectorChecker();
@@ -421,6 +448,222 @@ describe('SelectorChecker', () => {
 
       expect(actualResult).toBe(expectedResult);
     });
+  });
+
+  describe('isHover', () => {
+    it('button:hover matches button:hover ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:hover";
+      expectedResult = true;
+
+      stateMap = {
+        ":hover": [element]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button matches button:hover ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:hover";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
+
+  describe('isFocus', () => {
+    it('button:focus matches button:focus ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:focus";
+      expectedResult = true;
+
+      stateMap = {
+        ":focus": [element]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button matches button:focus ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:focus";
+      expectedResult = false;
+
+      stateMap = {
+        ":focus": [parent]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    })
+  });
+
+  describe('isActive', () => {
+    it('button:active matches button:active ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:active";
+      expectedResult = true;
+
+      stateMap = {
+        ":active": [element]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button matches button:active ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:active";
+      expectedResult = false;
+
+      stateMap = {
+        ":active": [parent]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    })
+  });
+
+  describe('isVisited', () => {
+    it('button:visited matches button:visited ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:visited";
+      expectedResult = true;
+
+      stateMap = {
+        ":visited": [element]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button matches button:visited ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:visited";
+      expectedResult = false;
+
+      stateMap = {
+        ":active": [parent]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    })
+  });
+
+  describe('isActive', () => {
+    it('button:link matches button:link ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:link";
+      expectedResult = true;
+
+      stateMap = {
+        ":hover": [element]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('button matches button:link ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, stateMap, checker = new SelectorChecker();
+
+      parent = document.createElement("section");
+      element = document.createElement("button");
+
+      parent.appendChild(document.createTextNode("text"));
+      parent.appendChild(element);
+
+      selector = "button:link";
+      expectedResult = false;
+
+      stateMap = {
+        ":visited": [element]
+      };
+
+      actualResult = checker.check(element, selector, stateMap);
+
+      expect(actualResult).toBe(expectedResult);
+    })
   });
 
   describe('isLastChild', () => {
@@ -3641,7 +3884,307 @@ describe('SelectorChecker', () => {
     });
   });
 
-  describe('check', () => {
+  describe('check => CHILD_COMBINATOR', () => {
+    it('div>p matches div > p:first-child ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
 
-  }); 
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+
+      parent.appendChild(element);
+
+      selector = "div>p:first-child";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('main>div>p matches main > div:nth-child(1) > p:nth-of-type(2n+1) ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+
+      element = document.createElement("p");
+
+      document.createElement("main").appendChild(parent);
+      parent.appendChild(element);
+
+      selector = "main > div:nth-child(1) > p:nth-of-type(2n+1)";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div.test > p matches .example > p:last-child ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("class", "test");
+
+      element = document.createElement("p");
+
+      parent.appendChild(element);
+
+      selector = ".example > p:last-child";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div.test > p matches .test > * ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("class", "test");
+
+      element = document.createElement("p");
+
+      parent.appendChild(element);
+
+      selector = ".test > *";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
+
+  describe('check => ADJACENT_SIBLING_COMBINATOR', () => {
+    it('div.test > h1 + p matches .test > h1 + p ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("class", "test");
+
+      element = document.createElement("p");
+
+      parent.appendChild(document.createElement("h1"));
+      parent.appendChild(element);
+
+      selector = ".test > h1 + p";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div.test > p matches .test > * + p ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("class", "test");
+
+      element = document.createElement("p");
+
+      parent.appendChild(element);
+
+      selector = ".test > * + p";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div.test > h1 + p matches .test > * + * ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("class", "test");
+
+      element = document.createElement("p");
+
+      parent.appendChild(document.createElement("h1"));
+      parent.appendChild(element);
+
+      selector = "div > * + *";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div.test > p matches .test > p + * ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("class", "test");
+
+      element = document.createElement("p");
+ 
+      parent.appendChild(element);
+
+      selector = "div > p + *";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
+
+  describe('check => DESCENDANT_COMBINATOR', () => {
+    it('main>section>article>h1 matches section h1 ==> true', () => {
+      let element, parent, parent2, parent3, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent3 = document.createElement("main");
+      parent2 = document.createElement("section");
+      parent = document.createElement("article");
+      element = document.createElement("h1");
+
+      parent3.appendChild(parent2);
+      parent2.appendChild(parent);
+      parent.appendChild(element);
+
+      selector = "section h1";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('main.page>section>article>h1 matches .page h1 ==> true', () => {
+      let element, parent, parent2, parent3, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent3 = document.createElement("main");
+      parent2 = document.createElement("section");
+      parent = document.createElement("article");
+      element = document.createElement("h1");
+
+      parent3.setAttribute("class", "page");
+
+      parent3.appendChild(parent2);
+      parent2.appendChild(parent);
+      parent.appendChild(element);
+
+      selector = ".page h1";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('main.page>section>article>h1 matches [lang=en] h1 ==> false', () => {
+      let element, parent, parent2, parent3, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent3 = document.createElement("main");
+      parent2 = document.createElement("section");
+      parent = document.createElement("article");
+      element = document.createElement("h1");
+
+      parent3.setAttribute("class", "page");
+
+      parent3.appendChild(parent2);
+      parent2.appendChild(parent);
+      parent.appendChild(element);
+
+      selector = "[lang=en] h1";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
+
+  describe('check => GENERAL_SIBLING_COMBINATOR', () => {
+    it('div#example > h1 + p + a.btn matches #example h1 ~ .btn[href=\'#\'] ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("id", "example");
+
+      element = document.createElement("a");
+      element.setAttribute("class", "btn");
+      element.setAttribute("href", "#");
+
+      parent.appendChild(document.createElement("h1"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(element);
+
+      selector = "#example h1 ~ .btn[href=\'#\']";
+      expectedResult = true;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div#example > h1 + p + a.btn matches #example h1 ~ footer ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("id", "example");
+
+      element = document.createElement("a");
+      element.setAttribute("class", "btn");
+      element.setAttribute("href", "#");
+
+      parent.appendChild(document.createElement("h1"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(element);
+
+      selector = "#example h1 ~ footer";
+      expectedResult = false;
+
+      actualResult = checker.check(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
+
+  describe('checkAll', () => {
+    it('div#example > h1 + p + a.btn matches #example p, #example .btn[href="#"] ==> true', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("id", "example");
+
+      element = document.createElement("a");
+      element.setAttribute("class", "btn");
+      element.setAttribute("href", "#");
+
+      parent.appendChild(document.createElement("h1"));
+      parent.appendChild(document.createElement("p"));
+      parent.appendChild(element);
+
+      selector = "#example p, #example .btn[href=\"#\"]";
+      expectedResult = true;
+
+      actualResult = checker.checkAll(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+
+    it('div#example > h1 + p + a.btn matches #test h1, article ==> false', () => {
+      let element, parent, selector, actualResult, expectedResult, checker = new SelectorChecker();
+
+      parent = document.createElement("div");
+      parent.setAttribute("id", "example");
+
+      element = document.createElement("h1");
+
+      parent.appendChild(element);
+      parent.appendChild(document.createElement("p"));
+
+      selector = "#test h1, article";
+      expectedResult = false;
+
+      actualResult = checker.checkAll(element, selector);
+
+      expect(actualResult).toBe(expectedResult);
+    });
+  });
 });
