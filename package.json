@@ -1,6 +1,6 @@
 {
   "name": "selector-checker",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Module for fast element to selector matching (with custom :hover, :focus etc. handing)",
   "main": "dist/selector-checker.js",
   "repository": {

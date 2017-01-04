@@ -1,13 +1,15 @@
 # selector-checker
 Module for fast element to selector matching (with custom :hover, :focus etc. handing)
 
-## What does this repo about
+[![NPM](https://nodei.co/npm/selector-checker.png?downloads=true)](https://nodei.co/npm/selector-checker/)
 
+## What does this repo about
+ 
 The SelectorChecker allows to match a specified DOM element with target css selector.
 
 This module should be useful in cases when you need to handle, force or manipulate a custom hover, focus, active
 or visited states.
- 
+
 
 ## How to use
 
