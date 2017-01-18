@@ -916,7 +916,6 @@ class SelectorChecker {
   checkAll(element, multipleSelector, stateMap){
     let selectors = multipleSelector.split(/\s*,\s*/), i;
     for (i = 0; i < selectors.length; i++){
-      console.log(selectors[i]);
       if (this.check(element, selectors[i], stateMap)) return true;
     }
     return false;

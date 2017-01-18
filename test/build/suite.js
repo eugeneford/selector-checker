@@ -1068,7 +1068,6 @@ var SelectorChecker = function () {
       var selectors = multipleSelector.split(/\s*,\s*/),
           i = void 0;
       for (i = 0; i < selectors.length; i++) {
-        console.log(selectors[i]);
         if (this.check(element, selectors[i], stateMap)) return true;
       }
       return false;
